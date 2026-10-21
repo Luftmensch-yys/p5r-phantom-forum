@@ -1,0 +1,15 @@
+# Local secrets and runtime files
+.env
+.env.*
+!.env.example
+config/local.php
+*.log
+*.bak
+*.sql
+!database/schema.sql
+uploadPic/*
+!uploadPic/joker.png
+sessions/
+.workbuddy/
+.DS_Store
+Thumbs.db

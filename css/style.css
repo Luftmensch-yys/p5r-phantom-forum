@@ -1,0 +1,462 @@
+/* ============================================================
+   TALK — 全站样式表 (css/style.css)
+   ============================================================ */
+
+/* ── 基础重置 & 画布层 ──────────────────── */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    min-height: 100vh;
+    width: 100%;
+    overflow-x: hidden;
+}
+
+canvas,
+canvas.p5Canvas {
+    position: fixed;
+    inset: 0;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    display: block;
+    z-index: -1;
+    pointer-events: none;
+}
+
+#container {
+    min-height: 100vh;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+}
+
+/* ── 侧边栏（桌面 hover / 手机汉堡）────── */
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 300px;
+    height: 88vh;
+    background-image: url(../img/20.png);
+    background-size: cover;
+    background-position: right center;
+    display: flex;
+    flex-direction: column;
+    padding: 80px 15px;
+    transition: all 0.4s ease;
+    box-shadow: 5px 0 10px rgba(0, 0, 0, 0.61);
+    z-index: 999;
+}
+
+.sidebar.collapsed {
+    transform: translateY(-50%) translateX(-240px);
+    padding: 80px 5px;
+}
+
+.sidebar.collapsed h3,
+.sidebar.collapsed a,
+.sidebar.collapsed img {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.sidebar h3 {
+    color: white;
+    margin: 20px 0;
+    font-size: 24px;
+}
+
+.sidebar img {
+    width: 200px;
+}
+
+a {
+    color: #dcdcdc;
+    text-decoration: none;
+    margin: 10px 0;
+    font-size: 18px;
+}
+
+/* ── 汉堡菜单按钮（仅手机显示）─────────── */
+.menu-toggle {
+    display: none;
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1000;
+    width: 44px;
+    height: 44px;
+    background: black;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+/* ── 投票区 ────────────────────────────── */
+.vote-section {
+    width: 100%;
+    min-height: 100vh;
+    background: url(../img/Q_bg.png);
+    background-size: cover;
+    background-position: center;
+    padding: 30px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.vote-question {
+    text-align: center;
+    margin-top: 100px;
+    margin-bottom: 30px;
+}
+
+.vote-question img {
+    max-width: 700px;
+    height: auto;
+}
+
+.vote-progress {
+    margin-bottom: 5px;
+    padding: 8px;
+    background: black;
+    display: flex;
+    align-items: stretch;
+}
+
+.vote-progress-inner {
+    flex: 1;
+    background: white;
+    overflow: hidden;
+    display: flex;
+}
+
+.vote-bar-exist {
+    background: linear-gradient(90deg, #d32f2f, #b71c1c);
+    transition: width 0.5s ease;
+}
+
+.vote-bar-not-exist {
+    background: #1a1a1a;
+    transition: width 0.5s ease;
+}
+
+.vote-percentages {
+    margin-left: 15px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #d32f2f;
+}
+
+.vote-options {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    margin-top: 0;
+}
+
+.vote-option {
+    text-align: center;
+    cursor: pointer;
+    padding: 15px;
+    border-radius: 10px;
+    transition: transform 0.3s, background 0.3s;
+}
+
+.vote-option:hover img {
+    transform: scale(1.1);
+}
+
+.vote-option img {
+    max-width: 150px;
+    height: auto;
+    margin-bottom: 10px;
+    transition: transform 0.3s ease;
+}
+
+.vote-status {
+    text-align: center;
+    color: white;
+    margin-bottom: 15px;
+    font-size: 18px;
+}
+
+/* ── 主内容区 ──────────────────────────── */
+.content {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0;
+    position: relative;
+}
+
+.chat-box {
+    width: 80%;
+    padding: 20px;
+    color: white;
+    margin: 20px auto 90px auto;
+}
+
+/* ════════════════════════════════════════
+   聊天卡片 — 不规则手绘气泡（多变体随机分配）
+   chat1.png: 原版（右上折角+轻微倾斜）
+   chat2.png: 变体（左下折角+右倾+手绘边框）
+   每条消息随机选一个 class(b0/b1)，产生大小/形状不规则变化
+   ════════════════════════════════════════ */
+.msg-main {
+    /* 基础样式：具体背景由 b0 / b1 变体类决定 */
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    padding: 110px 28px 26px 100px;    /* 略大于原版，气泡更"大" */
+    margin-bottom: 6px;                  /* 收紧间距（原10px） */
+    border-radius: 6px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    min-height: 220px;                   /* 放高最小高度 */
+}
+
+/* 变体 A — 原版风格（chat1.png） */
+.msg-main.b0 {
+    background-image: url(../img/chat1.png);
+}
+
+/* 变体 B — 手绘边框变体（chat2.png），微旋转增加不规则感 */
+.msg-main.b1 {
+    background-image: url(../img/chat2.png);
+}
+
+/* 回复消息卡片 */
+.msg-reply {
+    background: rgba(199, 199, 199, 0.41);
+    padding: 10px;
+    margin-bottom: 6px;
+    margin-left: 50px;
+    border-left: 3px solid #ffda07;
+    border-radius: 6px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.msg-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.msg-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.user {
+    font-weight: bold;
+    color: #ffda07;
+    font-size: 15px;
+}
+
+.time {
+    font-size: 12px;
+    opacity: 0.7;
+    margin-left: 10px;
+}
+
+.reply-info {
+    font-size: 12px;
+    color: rgb(153, 153, 153);
+    margin: 0 0 5px 12px;
+    opacity: 0.9;
+}
+
+/* ── 发送表单 ──────────────────────────── */
+.send-form {
+    width: 90%;
+    display: flex;
+    gap: 10px;
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    transition: opacity 0.3s;
+}
+
+.send-form.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.send-input {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.send-btn {
+    padding: 12px 30px;
+    background: black;
+    color: white;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* ── 返回顶部按钮 ──────────────────────── */
+.back-to-top {
+    position: fixed;
+    bottom: 80px;
+    right: 30px;
+    width: 50px;
+    height: 50px;
+    background: black;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 100;
+}
+
+.back-to-top:hover {
+    background: #333;
+}
+
+/* ── 错误提示 / 回复提示 ────────────────── */
+.error-msg {
+    width: 80%;
+    color: #ffd6d6;
+    margin-bottom: 12px;
+}
+
+.reply-tip {
+    width: 90%;
+    position: fixed;
+    bottom: 78px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #fff4b8;
+    z-index: 101;
+    display: none;
+    font-size: 14px;
+}
+
+.reply-tip.show {
+    display: block;
+}
+
+.reply-cancel {
+    margin-left: 10px;
+    color: #ffda07;
+    cursor: pointer;
+}
+
+
+/* ============================================================
+   移动端适配（≤768px）
+   ============================================================ */
+@media (max-width: 768px) {
+
+    /* 汉堡按钮可见 */
+    .menu-toggle {
+        display: block;
+    }
+
+    /* 侧边栏 → 抽屉式滑入（脱离桌面 hover 逻辑） */
+    .sidebar,
+    .sidebar.collapsed {
+        top: 0;
+        height: 100vh;
+        width: 82%;
+        max-width: 300px;
+        transform: translateX(-100%) !important; /* 默认隐藏在左侧外 */
+        padding: 80px 18px;
+    }
+
+    .sidebar.open {
+        transform: translateX(0) !important; /* 展开时归位 */
+    }
+
+    /* 抽屉模式下文字始终可见 */
+    .sidebar.collapsed h3,
+    .sidebar.collapsed a,
+    .sidebar.collapsed img,
+    .sidebar.open h3,
+    .sidebar.open a,
+    .sidebar.open img {
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+
+    /* 内容区内边距收窄 */
+    .content {
+        padding: 0 8px;
+    }
+
+    /* 投票区上移避开汉堡按钮 */
+    .vote-question {
+        margin-top: 64px;
+    }
+
+    .vote-question img {
+        max-width: 100%;
+    }
+
+    .vote-options {
+        gap: 14px;
+    }
+
+    .vote-option img {
+        max-width: 110px;
+    }
+
+    /* 聊天区全宽 */
+    .chat-box {
+        width: 100%;
+        padding: 12px 6px;
+    }
+
+            /* 主聊天卡片：padding 收窄，文字不溢出图片装饰区 */
+            .msg-main {
+                padding: 70px 16px 18px 18px;
+                min-height: 170px;
+            }
+
+    /* 回复缩进收窄 */
+    .msg-reply {
+        margin-left: 18px;
+    }
+
+    /* 发送表单自适应 */
+    .send-form {
+        width: 94%;
+    }
+
+    .send-btn {
+        padding: 12px 18px;
+    }
+
+    /* 回到顶部按钮位置调整 */
+    .back-to-top {
+        right: 16px;
+        bottom: 76px;
+    }
+}

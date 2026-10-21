@@ -1,0 +1,8 @@
+# 禁止通过 Web 直接访问配置目录（返回 403）
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+<FilesMatch "^.*$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
