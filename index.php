@@ -256,6 +256,7 @@ $group = $finalGroups;
             <!-- ═══ 聊天区 ═══ -->
             <div class="chat-box" id="chatArea">
                 <?php foreach ($group as $thread): ?>
+                    <section class="discussion-thread" aria-label="评论与回复">
                     <?php foreach ($thread as $message): ?>
                         <?php
                         $baseClass = (int)$message['reply_id'] === 0 ? 'msg-main' : 'msg-reply';
@@ -293,6 +294,7 @@ $group = $finalGroups;
                             </div>
                         </div>
                     <?php endforeach; ?>
+                    </section>
                 <?php endforeach; ?>
             </div>
 
